@@ -12,7 +12,8 @@ Todos are based on markdown files. The title of the file is the title of the tod
 
 Parts of a todo
 
-Title: <filename>.md
+```
+Title: <filename>
 Status: x
 Priority: A | B | C
 Order: <number>
@@ -21,6 +22,7 @@ Due: <date>
 tags: comma separated list
 <empty line>
 Description and details is the rest of the file in markdown
+```
 
 ---
 
