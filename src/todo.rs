@@ -5,13 +5,30 @@ use std::path::Path;
 #[derive(Debug)]
 pub struct TodoItem {
     pub title: String,
-    pub status: bool,
+    pub status: String,
     pub priority: char,
     pub order: u16,
     pub creation_date: String,
     pub due_date: String,
     pub tags: Vec<String>,
     pub description: String,
+    pub file_path: String,
+}
+
+impl Default for TodoItem {
+    fn default() -> Self {
+        TodoItem {
+            title: String::new(),
+            status: "Done".to_string(),
+            priority: 'C',
+            order: 1,
+            creation_date: String::new(),
+            due_date: String::new(),
+            tags: Vec::new(),
+            description: String::new(),
+            file_path: String::new(),
+        }
+    }
 }
 
 impl TodoItem {
@@ -23,7 +40,7 @@ impl TodoItem {
         file.read_to_string(&mut buffer).unwrap();
 
         let mut title = String::new();
-        let mut status = false;
+        let mut status = "Done".to_string();
         let mut priority = String::new();
         let mut order = 0;
         let mut creation_date = String::new();
@@ -51,7 +68,7 @@ impl TodoItem {
 
             match key {
                 "Title" => title = value.to_string(),
-                "Status" => status = value == "true",
+                "Status" => status = value.to_string(),
                 "Priority" => priority = value.to_string(),
                 "Order" => order = value.parse().unwrap(),
                 "Creation Date" => creation_date = value.to_string(),
@@ -71,6 +88,7 @@ impl TodoItem {
             due_date,
             tags,
             description,
+            file_path: String::from(file_path.to_str().unwrap()),
         };
 
         Ok(todo_item)
@@ -78,8 +96,7 @@ impl TodoItem {
 
     /// Validate the data in the struct is the same as in the file.
     pub fn validate(&self) -> bool {
-        let filename = format!("{}.md", self.title);
-        let file_path = Path::new(filename.as_str());
+        let file_path = Path::new(self.file_path.as_str());
 
         let data = TodoItem::load(file_path).unwrap();
 
@@ -95,8 +112,7 @@ impl TodoItem {
 
     /// Save the data in the struct to the file
     pub fn save(&self) -> Result<(), Error> {
-        let filename = format!("{}.md", self.title);
-        let file_path = Path::new(filename.as_str());
+        let file_path = Path::new(self.file_path.as_str());
 
         let mut file = File::create(file_path)?;
 
@@ -116,8 +132,7 @@ impl TodoItem {
     }
 
     pub fn delete(&self) -> Result<(), Error> {
-        let filename = format!("{}.md", self.title);
-        let file_path = Path::new(filename.as_str());
+        let file_path = Path::new(self.file_path.as_str());
 
         std::fs::remove_file(file_path)?;
 

@@ -10,12 +10,11 @@ pub struct Config {
 }
 
 fn create_default_config(config_path: &std::path::Path) -> Result<(), Error> {
-    let data_dir = document_dir().ok_or_else(|| Error::new(ErrorKind::NotFound, "Could not find document directory"))?;
+    let data_dir = document_dir()
+        .ok_or_else(|| Error::new(ErrorKind::NotFound, "Could not find document directory"))?;
     let data_location = format!("{}/mddo/", data_dir.to_str().unwrap());
 
-    let default_config = Config {
-        data_location
-    };
+    let default_config = Config { data_location };
 
     let _ = fs::write(config_path, toml::to_string(&default_config).unwrap());
 
