@@ -1,5 +1,5 @@
-use std::path::Path;
 use crate::todo::TodoItem;
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct Project {
@@ -22,7 +22,12 @@ impl Project {
         }
 
         Project {
-            title: project_path.file_name().unwrap().to_str().unwrap().to_string(),
+            title: project_path
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_string(),
             items,
         }
     }

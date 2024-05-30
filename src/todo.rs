@@ -1,6 +1,6 @@
-use std::path::Path;
 use std::fs::File;
-use std::io::{Error, Write, Read};
+use std::io::{Error, Read, Write};
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct TodoItem {
@@ -14,9 +14,9 @@ pub struct TodoItem {
     pub description: String,
 }
 
-impl TodoItem{
+impl TodoItem {
     /// load the data from the file path into a todo item
-    pub fn load(file_path: &Path) ->  Result<TodoItem, Error> {
+    pub fn load(file_path: &Path) -> Result<TodoItem, Error> {
         let mut file = File::open(file_path).unwrap();
         let mut buffer = String::new();
 
@@ -83,14 +83,14 @@ impl TodoItem{
 
         let data = TodoItem::load(file_path).unwrap();
 
-        self.title == data.title &&
-        self.status == data.status &&
-        self.priority == data.priority &&
-        self.order == data.order &&
-        self.creation_date == data.creation_date &&
-        self.due_date == data.due_date &&
-        self.tags == data.tags &&
-        self.description == data.description
+        self.title == data.title
+            && self.status == data.status
+            && self.priority == data.priority
+            && self.order == data.order
+            && self.creation_date == data.creation_date
+            && self.due_date == data.due_date
+            && self.tags == data.tags
+            && self.description == data.description
     }
 
     /// Save the data in the struct to the file

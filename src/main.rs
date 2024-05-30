@@ -1,13 +1,11 @@
 use std::path::Path;
 
-mod todo;
 mod config;
 mod projects;
+mod todo;
 
 use config::load_config;
 use projects::Project;
-
-
 
 fn main() {
     let config = load_config().unwrap();
