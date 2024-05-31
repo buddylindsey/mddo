@@ -27,14 +27,28 @@ pub fn load_config() -> Result<Config, Error> {
         .unwrap();
     config_path.push("mddo");
 
-    if !config_path.try_exists().is_err() {
-        fs::create_dir(&config_path)?;
+    match config_path.try_exists() {
+        Ok(exists) => {
+            if !exists {
+                fs::create_dir(&config_path)?;
+            }
+        }
+        Err(_) => {
+            fs::create_dir(&config_path)?;
+        }
     }
 
     config_path.push("config.toml");
 
-    if !config_path.try_exists().is_err() {
-        create_default_config(&config_path)?;
+    match config_path.try_exists() {
+        Ok(exists) => {
+            if !exists {
+                create_default_config(&config_path)?;
+            }
+        }
+        Err(_) => {
+            create_default_config(&config_path)?;
+        }
     }
 
     let config = fs::read_to_string(config_path)?;
