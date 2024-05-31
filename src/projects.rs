@@ -1,12 +1,12 @@
 use crate::todo::TodoItem;
 use std::io::Result;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub struct Project {
     pub title: String,
     pub items: Vec<TodoItem>,
-    pub path: String,
+    pub path: PathBuf,
 }
 
 impl Project {
@@ -31,13 +31,17 @@ impl Project {
                 .unwrap_or("Unknown Project")
                 .to_string(),
             items,
-            path: project_path.to_str().unwrap().to_string(),
+            path: project_path.to_path_buf(),
         })
     }
 
     pub fn add_item(&mut self, mut item: TodoItem) -> Result<()> {
-        item.file_path = format!("{}/{}.md", self.path, item.title);
+        let mut filename = self.path.clone();
+        filename.push(format!("{}.md", item.title));
+
+        item.file_path = filename;
         item.save()?;
+
         self.items.push(item);
         Ok(())
     }

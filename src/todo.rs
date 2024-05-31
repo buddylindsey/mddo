@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::{Error, Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub struct TodoItem {
@@ -12,7 +12,7 @@ pub struct TodoItem {
     pub due_date: String,
     pub tags: Vec<String>,
     pub description: String,
-    pub file_path: String,
+    pub file_path: PathBuf,
 }
 
 impl Default for TodoItem {
@@ -26,7 +26,7 @@ impl Default for TodoItem {
             due_date: String::new(),
             tags: Vec::new(),
             description: String::new(),
-            file_path: String::new(),
+            file_path: PathBuf::new(),
         }
     }
 }
@@ -88,7 +88,7 @@ impl TodoItem {
             due_date,
             tags,
             description,
-            file_path: String::from(file_path.to_str().unwrap()),
+            file_path: file_path.into()
         };
 
         Ok(todo_item)
@@ -96,9 +96,7 @@ impl TodoItem {
 
     /// Validate the data in the struct is the same as in the file.
     pub fn validate(&self) -> bool {
-        let file_path = Path::new(self.file_path.as_str());
-
-        let data = TodoItem::load(file_path).unwrap();
+        let data = TodoItem::load(&self.file_path).unwrap();
 
         self.title == data.title
             && self.status == data.status
@@ -112,9 +110,7 @@ impl TodoItem {
 
     /// Save the data in the struct to the file
     pub fn save(&self) -> Result<(), Error> {
-        let file_path = Path::new(self.file_path.as_str());
-
-        let mut file = File::create(file_path)?;
+        let mut file = File::create(&self.file_path)?;
 
         writeln!(file, "Title: {}", self.title)?;
         writeln!(file, "Status: {}", self.status)?;
@@ -132,9 +128,7 @@ impl TodoItem {
     }
 
     pub fn delete(&self) -> Result<(), Error> {
-        let file_path = Path::new(self.file_path.as_str());
-
-        std::fs::remove_file(file_path)?;
+        std::fs::remove_file(&self.file_path)?;
 
         Ok(())
     }
