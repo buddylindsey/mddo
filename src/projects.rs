@@ -9,6 +9,19 @@ pub struct Project {
     pub path: PathBuf,
 }
 
+pub fn initialize_projects(project_path: &Path) -> Result<Vec<Project>> {
+    let mut all_projects = vec![];
+
+    for projects in project_path.read_dir()? {
+        if let Ok(project) = projects {
+            let project = Project::load(&project.path())?;
+            all_projects.push(project);
+        }
+    }
+
+    Ok(all_projects)
+}
+
 impl Project {
     pub fn load(project_path: &Path) -> Result<Project> {
         let mut items = Vec::new();

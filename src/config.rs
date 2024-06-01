@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use dirs::{config_dir, document_dir};
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -6,13 +7,13 @@ use toml;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-    pub data_location: String,
+    pub data_location: PathBuf,
 }
 
 fn create_default_config(config_path: &std::path::Path) -> Result<(), Error> {
-    let data_dir = document_dir()
+    let mut data_location = document_dir()
         .ok_or_else(|| Error::new(ErrorKind::NotFound, "Could not find document directory"))?;
-    let data_location = format!("{}/mddo/", data_dir.to_str().unwrap());
+    data_location.push("mddo");
 
     let default_config = Config { data_location };
 
