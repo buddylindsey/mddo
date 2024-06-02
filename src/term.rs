@@ -16,14 +16,12 @@ pub fn init() -> Result<Terminal<impl Backend>, Error> {
     let terminal = Terminal::new(CrosstermBackend::new(io::stdout()))?;
     enable_raw_mode()?;
     stdout().execute(EnterAlternateScreen)?;
-
     Ok(terminal)
 }
 
 pub fn restore() -> Result<(), Error> {
     disable_raw_mode()?;
     stdout().execute(LeaveAlternateScreen)?;
-
     Ok(())
 }
 

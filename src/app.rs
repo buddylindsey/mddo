@@ -3,13 +3,14 @@ use crate::projects::{initialize_projects, Project};
 use crate::term;
 use std::{io::Error, time::Duration};
 
-use ratatui::crossterm::{
-    event::{Event, KeyCode, KeyEvent, KeyEventKind},
-};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind};
 
-use ratatui::{ backend::Backend,
+use ratatui::{
+    backend::Backend,
+    buffer::Buffer,
+    layout::{Constraint, Layout, Rect},
     terminal::Terminal,
-    widgets::Widget,
+    widgets::{Block, Paragraph, Widget},
 };
 
 #[derive(Debug, Default, PartialEq)]
@@ -56,7 +57,7 @@ impl App {
 
     fn draw(&self, terminal: &mut Terminal<impl Backend>) -> Result<(), Error> {
         terminal.draw(|frame| {
-            frame.render_widget(&self, frame.size());
+            frame.render_widget(self, frame.size());
         })?;
         Ok(())
     }
@@ -65,7 +66,7 @@ impl App {
         let timeout = Duration::from_secs_f64(1.0 / 50.0);
         match term::next_event(timeout)? {
             Some(Event::Key(key)) if key.kind == KeyEventKind::Press => self.handle_key_press(key),
-            None => {}
+            _ => {}
         }
         Ok(())
     }
@@ -75,5 +76,20 @@ impl App {
             KeyCode::Char('q') => self.mode = Mode::Quit,
             _ => {}
         };
+    }
+}
+
+impl Widget for &App {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        let vertical = Layout::vertical([Constraint::Length(3), Constraint::Min(1)]);
+        let [title, body] = vertical.areas(area);
+
+        let title_block = Block::bordered();
+        let title_text = Paragraph::new("Things To Do").block(title_block);
+        title_text.render(title, buf);
+
+        let body_block = Block::bordered();
+        let body_text = Paragraph::new("Get it Done").block(body_block);
+        body_text.render(body, buf);
     }
 }
