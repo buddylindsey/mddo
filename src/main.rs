@@ -1,10 +1,14 @@
+mod app;
 mod config;
 mod projects;
+mod term;
 mod todo;
-mod app;
 
 use app::App;
+use term::{init, restore};
 
 fn main() {
-    let mut app = App::default();
+    let mut terminal = init().unwrap();
+    let _app = App::default().run(&mut terminal).unwrap();
+    restore().unwrap();
 }

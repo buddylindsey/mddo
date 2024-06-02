@@ -88,7 +88,7 @@ impl TodoItem {
             due_date,
             tags,
             description,
-            file_path: file_path.into()
+            file_path: file_path.into(),
         };
 
         Ok(todo_item)

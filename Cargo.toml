@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+crossterm = "0.27.0"
 dirs = "5.0.1"
+ratatui = { version = "0.26.3", features = ["all-widgets", "crossterm"] }
 serde = { version = "1.0.203", features = ["derive"] }
 toml = "0.8.13"

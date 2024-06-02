@@ -1,8 +1,8 @@
-use std::path::PathBuf;
 use dirs::{config_dir, document_dir};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::{Error, ErrorKind};
+use std::path::PathBuf;
 use toml;
 
 #[derive(Debug, Deserialize, Serialize)]
