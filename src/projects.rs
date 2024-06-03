@@ -1,8 +1,15 @@
 use crate::todo::TodoItem;
+use ratatui::{
+    backend::Backend,
+    buffer::Buffer,
+    layout::{Constraint, Layout, Rect},
+    terminal::Terminal,
+    widgets::{Block, Paragraph, Widget},
+};
 use std::io::Result;
 use std::path::{Path, PathBuf};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Project {
     pub title: String,
     pub items: Vec<TodoItem>,
@@ -57,5 +64,23 @@ impl Project {
 
         self.items.push(item);
         Ok(())
+    }
+}
+
+impl Widget for Project {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        let vertical = Layout::vertical([Constraint::Min(1)]);
+        let [body] = vertical.areas(area);
+
+        let project_block = Block::bordered().title(self.title.as_str());
+        let project_text = Paragraph::new(
+            self.items
+                .iter()
+                .map(|item| item.title.as_str())
+                .collect::<Vec<&str>>()
+                .join("\n"),
+        )
+        .block(project_block);
+        project_text.render(body, buf);
     }
 }

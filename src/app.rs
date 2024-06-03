@@ -14,7 +14,7 @@ use ratatui::{
 };
 
 #[derive(Debug, Default, PartialEq)]
-enum Mode {
+pub enum Mode {
     #[default]
     MainScreen,
     EditProject,
@@ -26,6 +26,7 @@ pub struct App {
     pub projects: Vec<Project>,
     pub config: Config,
     pub mode: Mode,
+    pub selected_project: u8,
 }
 
 impl Default for App {
@@ -38,6 +39,7 @@ impl Default for App {
             projects,
             config,
             mode,
+            selected_project: 0,
         }
     }
 }
@@ -88,8 +90,13 @@ impl Widget for &App {
         let title_text = Paragraph::new("Things To Do").block(title_block);
         title_text.render(title, buf);
 
-        let body_block = Block::bordered();
-        let body_text = Paragraph::new("Get it Done").block(body_block);
-        body_text.render(body, buf);
+        self.render_project(body, buf);
+    }
+}
+
+impl App {
+    fn render_project(&self, area: Rect, buf: &mut Buffer) {
+        let project = self.projects[self.selected_project as usize].clone();
+        project.render(area, buf);
     }
 }

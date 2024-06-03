@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{Error, Read, Write};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TodoItem {
     pub title: String,
     pub status: String,
