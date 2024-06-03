@@ -10,7 +10,7 @@ use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
     terminal::Terminal,
-    widgets::{Block, Paragraph, Widget},
+    widgets::{Block, Paragraph, Tabs, Widget},
 };
 
 #[derive(Debug, Default, PartialEq)]
@@ -76,6 +76,9 @@ impl App {
     fn handle_key_press(&mut self, key: KeyEvent) {
         match key.code {
             KeyCode::Char('q') => self.mode = Mode::Quit,
+            KeyCode::Tab => {
+                self.selected_project = (self.selected_project + 1) % self.projects.len() as u8
+            },
             _ => {}
         };
     }
@@ -84,17 +87,25 @@ impl App {
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let vertical = Layout::vertical([Constraint::Length(3), Constraint::Min(1)]);
-        let [title, body] = vertical.areas(area);
+        let [tabs, body] = vertical.areas(area);
 
-        let title_block = Block::bordered();
-        let title_text = Paragraph::new("Things To Do").block(title_block);
-        title_text.render(title, buf);
-
+        self.render_tabs(tabs, buf);
         self.render_project(body, buf);
     }
 }
 
 impl App {
+    fn render_tabs(&self, area: Rect, buf: &mut Buffer) {
+        let tab_titles: Vec<&str> = self.projects.iter().map(|tab| tab.title.as_str()).collect();
+
+        let tabs_block = Block::bordered().title("Projects");
+        let tabs = Tabs::new(tab_titles)
+            .select(self.selected_project as usize)
+            .block(tabs_block);
+
+        tabs.render(area, buf);
+    }
+
     fn render_project(&self, area: Rect, buf: &mut Buffer) {
         let project = self.projects[self.selected_project as usize].clone();
         project.render(area, buf);
