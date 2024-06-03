@@ -1,9 +1,7 @@
 use crate::todo::TodoItem;
 use ratatui::{
-    backend::Backend,
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    terminal::Terminal,
     widgets::{Block, Paragraph, Widget},
 };
 use std::io::Result;

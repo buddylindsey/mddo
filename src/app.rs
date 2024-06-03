@@ -1,6 +1,9 @@
-use crate::config::{load_config, Config};
-use crate::projects::{initialize_projects, Project};
-use crate::term;
+use crate::{
+    config::{load_config, Config},
+    projects::{initialize_projects, Project},
+    term,
+};
+
 use std::{io::Error, time::Duration};
 
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind};
@@ -78,7 +81,7 @@ impl App {
             KeyCode::Char('q') => self.mode = Mode::Quit,
             KeyCode::Tab => {
                 self.selected_project = (self.selected_project + 1) % self.projects.len() as u8
-            },
+            }
             _ => {}
         };
     }
