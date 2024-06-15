@@ -20,9 +20,11 @@ use ratatui::{
 pub enum Mode {
     #[default]
     MainScreen,
+    AddProject,
     EditProject,
     EditTodo,
     Quit,
+    Popup
 }
 
 pub struct App {
@@ -79,6 +81,13 @@ impl App {
     fn handle_key_press(&mut self, key: KeyEvent) {
         match key.code {
             KeyCode::Char('q') => self.mode = Mode::Quit,
+            KeyCode::Char('p') => {
+                if self.mode == Mode::MainScreen {
+                    self.mode = Mode::Popup;
+                } else {
+                    self.mode = Mode::MainScreen;
+                }
+            }
             KeyCode::Tab => {
                 self.selected_project = (self.selected_project + 1) % self.projects.len() as u8
             }
@@ -94,11 +103,38 @@ impl Widget for &App {
 
         self.render_tabs(tabs, buf);
         self.render_project(body, buf);
+
+        if self.mode == Mode::Popup {
+            self.render_popup(area, buf);
+        }
     }
 }
 
+fn calculate_popup_area(area: Rect, height: u16, width: u16) -> Rect {
+    let popup_x = (area.width.saturating_sub(width)) / 2;
+    let popup_y = (area.height.saturating_sub(height)) / 2;
+
+    return Rect::new(popup_x, popup_y, width, height)
+}
+
 impl App {
+    fn render_popup(&self, area: Rect, buf: &mut Buffer) {
+        let popup_area = calculate_popup_area(area, 10, 30);
+
+        // Create a block for the popup with a border
+        let block = Block::default().borders(ratatui::widgets::Borders::ALL);
+
+        // Create a Paragraph for the popup content
+        let text = Paragraph::new("I am a popup").block(block);
+
+        // Render the popup
+        text.render(popup_area, buf);
+    }
+
     fn render_tabs(&self, area: Rect, buf: &mut Buffer) {
+        if self.projects.is_empty() {
+            return;
+        }
         let tab_titles: Vec<&str> = self.projects.iter().map(|tab| tab.title.as_str()).collect();
 
         let tabs_block = Block::bordered().title("Projects");
@@ -110,6 +146,9 @@ impl App {
     }
 
     fn render_project(&self, area: Rect, buf: &mut Buffer) {
+        if self.projects.is_empty() {
+            return
+        }
         let project = self.projects[self.selected_project as usize].clone();
         project.render(area, buf);
     }
