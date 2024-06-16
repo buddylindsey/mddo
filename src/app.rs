@@ -24,7 +24,7 @@ pub enum Mode {
     EditProject,
     EditTodo,
     Quit,
-    Popup
+    Popup,
 }
 
 pub struct App {
@@ -88,6 +88,8 @@ impl App {
                     self.mode = Mode::MainScreen;
                 }
             }
+            KeyCode::Char('c') => self.mode = Mode::MainScreen,
+            KeyCode::Esc => self.mode = Mode::MainScreen,
             KeyCode::Tab => {
                 self.selected_project = (self.selected_project + 1) % self.projects.len() as u8
             }
@@ -114,7 +116,7 @@ fn calculate_popup_area(area: Rect, height: u16, width: u16) -> Rect {
     let popup_x = (area.width.saturating_sub(width)) / 2;
     let popup_y = (area.height.saturating_sub(height)) / 2;
 
-    return Rect::new(popup_x, popup_y, width, height)
+    return Rect::new(popup_x, popup_y, width, height);
 }
 
 impl App {
@@ -147,7 +149,7 @@ impl App {
 
     fn render_project(&self, area: Rect, buf: &mut Buffer) {
         if self.projects.is_empty() {
-            return
+            return;
         }
         let project = self.projects[self.selected_project as usize].clone();
         project.render(area, buf);

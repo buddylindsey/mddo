@@ -82,3 +82,14 @@ impl Widget for Project {
         project_text.render(body, buf);
     }
 }
+
+pub struct AddProject {
+    name: String,
+}
+
+impl Widget for AddProject {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        let horizontal = Layout::horizontal([Constraint::Max(5), Constraint::Min(1)]);
+        let [label, input] = horizontal.areas(area);
+    }
+}
